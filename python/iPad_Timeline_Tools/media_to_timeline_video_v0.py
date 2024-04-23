@@ -92,17 +92,39 @@ def process_videos(folder_path):
 
     print(f"CSV file created: {csv_file_path}")
 
-# Example usage:
-# Set up to use a GUI for folder selection
-root = tk.Tk()
-root.withdraw()  # to hide the small tk window
-folder_path = filedialog.askdirectory(title="Select Folder Containing Video Files")
-process_videos(folder_path)
+def convert_heic_to_png(heic_folder_path):
+    files = [f for f in os.listdir(heic_folder_path) if f.lower().endswith('.heic')]
+    register_heif_opener()
+    for filename in files:
+        heic_path = os.path.join(heic_folder_path, filename)
+        try:
+            # Open HEIC file
+            with Image.open(heic_path) as img:
+                # Convert HEIC to PNG
+                png_path = os.path.join(heic_folder_path, filename[:-5] + '.png')
+                img.save(png_path, "PNG")
+                print(f"Converted {filename} to PNG format.")
+        except Exception as e:
+            print(f"Failed to convert {filename}: {e}")
+
+# # Example usage:
+# # Set up to use a GUI for folder selection
+# root = tk.Tk()
+# root.withdraw()  # to hide the small tk window
+# folder_path = filedialog.askdirectory(title="Select Folder Containing Video Files")
+# process_videos(folder_path)
 
 
+# # Example usage:
+# # Set up to use a GUI for folder selection
+# root = tk.Tk()
+# root.withdraw()  # to hide the small tk window
+# folder_path = filedialog.askdirectory(title="Select Folder Containing Image Files")
+# process_images(folder_path)
+
 # Example usage:
-# Set up to use a GUI for folder selection
+# Assuming you have a directory picker or you can specify the path directly
 root = tk.Tk()
 root.withdraw()  # to hide the small tk window
-folder_path = filedialog.askdirectory(title="Select Folder Containing Image Files")
-process_images(folder_path)
+heic_folder_path = filedialog.askdirectory(title="Select Folder Containing HEIC Images")
+convert_heic_to_png(heic_folder_path)
