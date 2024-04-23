@@ -69,49 +69,6 @@ def extract_video_metadata(file_path):
         print(f"Error processing {file_path}: {e}")
         return '-', '-'
 
-
-# def extract_video_metadata(file_path):
-    try:
-        parser = createParser(file_path)
-        if not parser:
-            return '-', '-'
-        metadata = extractMetadata(parser)
-        # print(str(type(metadata)))
-        # test = hachoir.metadata.video.MP4Metadata()
-        # for key, value in metadata._Metadata__data.items():
-            # print(f"{key}: {str(type(value))}")
-            # print(f"{key}: {str(value)}")
-            # print(f"{key}: {value}")
-        #     print()
-
-        # for key, value in metadata._Metadata__data.items():
-        #     print(key)
-
-        # duration_in_seconds = metadata.get('duration').seconds
-        # print("str(type(duration_in_seconds)) = "+str(type(duration_in_seconds)))
-        
-        # print(duration.seconds)
-        # print(dir(duration))
-        # creation_date = metadata.get('creation_date')
-
-        # date_time_original = metadata.get('date_time_original')
-        # print(date_time_original)
-        
-        # print(dir(metadata))
-        # print(dir(metadata._Metadata__data))
-
-
-        
-        
-        if metadata:
-            duration = metadata.get('duration').text if metadata.has('duration') else '-'
-            # duration = metadata.get('duration').seconds
-            creation_date = metadata.get('creation_date').strftime("%I:%M:%S %p") if metadata.has('creation_date') else '-'
-            return creation_date, duration
-    except Exception as e:
-        print(f"Error processing {file_path}: {e}")
-        return '-', '-'
-
 def process_videos(folder_path):
     files = [f for f in os.listdir(folder_path) if f.lower().endswith('.mov')]
     files.sort()
