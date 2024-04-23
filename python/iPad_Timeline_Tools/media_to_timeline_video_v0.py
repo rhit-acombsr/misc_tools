@@ -17,6 +17,7 @@ def extract_time_taken(file_path):
         try:
             # Use file system's modification time for HEIC files
             file_stat = os.stat(file_path)
+            print(file_stat.st_mtime)
             return datetime.fromtimestamp(file_stat.st_mtime).strftime("%I:%M:%S %p")
         except Exception as e:
             print(f"Error processing {file_path}: {e}")
@@ -100,15 +101,21 @@ def convert_heic_to_png(heic_folder_path):
     register_heif_opener()
     for filename in files:
         heic_path = os.path.join(heic_folder_path, filename)
-        try:
-            # Open HEIC file
-            with Image.open(heic_path) as img:
-                # Convert HEIC to PNG
-                png_path = os.path.join(heic_folder_path, filename[:-5] + '.png')
-                img.save(png_path, "PNG")
-                print(f"Converted {filename} to PNG format.")
-        except Exception as e:
-            print(f"Failed to convert {filename}: {e}")
+        png_path = os.path.join(heic_folder_path, filename[:-5] + '.png')
+
+        # Check if the PNG version already exists
+        if not os.path.exists(png_path):
+            try:
+                # Open HEIC file
+                with Image.open(heic_path) as img:
+                    # Convert HEIC to PNG
+                    img.save(png_path, "PNG")
+                    print(f"Converted {filename} to PNG format.")
+            except Exception as e:
+                print(f"Failed to convert {filename}: {e}")
+        else:
+            print(f"Skipping conversion for {filename} as PNG version already exists.")
+
 
 def format_duration(seconds):
     # Convert duration in seconds to HH:MM:SS format
@@ -182,6 +189,31 @@ def consolidate_media_metadata(media_folder_path):
 
     return all_media_metadata
 
+import tkinter as tk
+
+def display_basic_timeline():
+    # Create the main window
+    root = tk.Tk()
+    root.title("Media Timeline")
+    
+    # Get screen width and height
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    
+    # Set the size of the window to full screen
+    root.geometry(f"{screen_width}x{screen_height}")
+    
+    # Create a canvas for drawing the timeline
+    canvas = tk.Canvas(root, width=screen_width, height=screen_height, bg='white')
+    canvas.pack(fill=tk.BOTH, expand=True)
+    
+    # Draw a central horizontal line across the screen
+    line_y = screen_height // 2
+    canvas.create_line(0, line_y, screen_width, line_y, fill='black', width=2)
+    
+    # Start the Tkinter event loop
+    root.mainloop()
+
 # # Example usage:
 # # Set up to use a GUI for folder selection
 # root = tk.Tk()
@@ -203,18 +235,20 @@ def consolidate_media_metadata(media_folder_path):
 # heic_folder_path = filedialog.askdirectory(title="Select Folder Containing HEIC Images")
 # convert_heic_to_png(heic_folder_path)
 
-# # Example usage:
-# # folder_path = 'path_to_your_folder'  # Update the folder path to where your files are stored
-# root = tk.Tk()
-# root.withdraw()  # to hide the small tk window
-# folder_path = filedialog.askdirectory(title="Select Folder Containing Media Files")
-# extract_audio_metadata(folder_path)
-
 # Example usage:
-# Set up to use a GUI for folder selection
+# folder_path = 'path_to_your_folder'  # Update the folder path to where your files are stored
 root = tk.Tk()
 root.withdraw()  # to hide the small tk window
-media_folder_path = filedialog.askdirectory(title="Select Folder Containing All Media Files")
-metadata = consolidate_media_metadata(media_folder_path)
-print(metadata)
+folder_path = filedialog.askdirectory(title="Select Folder Containing Media Files")
+extract_audio_metadata(folder_path)
 
+# # Example usage:
+# # Set up to use a GUI for folder selection
+# root = tk.Tk()
+# root.withdraw()  # to hide the small tk window
+# media_folder_path = filedialog.askdirectory(title="Select Folder Containing All Media Files")
+# metadata = consolidate_media_metadata(media_folder_path)
+# print(metadata)
+
+# # Example usage
+# display_basic_timeline()
