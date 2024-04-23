@@ -116,7 +116,6 @@ def convert_heic_to_png(heic_folder_path):
         else:
             print(f"Skipping conversion for {filename} as PNG version already exists.")
 
-
 def format_duration(seconds):
     # Convert duration in seconds to HH:MM:SS format
     return str(datetime.utcfromtimestamp(seconds).strftime('%H:%M:%S'))
@@ -132,14 +131,16 @@ def extract_audio_metadata(folder_path):
         # Extract duration and format it
         length = format_duration(audio.info.length)
 
-        # Extract creation date, assuming '©day' is used for storing creation date in .m4a files
-        media_created = audio.tags.get('©day', [''])[0]
-        if media_created:
-            try:
-                # Format date if it's in a recognizable format
-                media_created = datetime.strptime(media_created, '%Y-%m-%d %H:%M:%S').strftime('%m/%d/%Y %I:%M %p')
-            except ValueError:
-                pass  # Use the date string as is if it's not in the expected format
+        # Attempt to extract the creation date
+        media_created = audio.tags.get('©day', None)
+        if media_created is None:
+            raise ValueError(f"No 'Media Created' metadata found for file {audio_file}")
+
+        try:
+            # Try to format the 'Media Created' date
+            media_created = datetime.strptime(media_created[0], '%Y-%m-%d %H:%M:%S').strftime('%m/%d/%Y %I:%M %p')
+        except ValueError as e:
+            raise ValueError(f"Date format error in file {audio_file}: {e}")
 
         csv_data.append([audio_file, length, media_created])
 
