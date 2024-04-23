@@ -8,6 +8,8 @@ import hachoir
 from hachoir.parser import createParser
 from hachoir.metadata import extractMetadata
 from mutagen.mp4 import MP4
+from pillow_heif import register_heif_opener
+from PIL import Image
 
 def extract_time_taken(file_path):
     ext = os.path.splitext(file_path)[-1].lower()
@@ -142,6 +144,44 @@ def extract_audio_metadata(folder_path):
 
     print(f"CSV file created: {csv_file_path}")
 
+def consolidate_media_metadata(media_folder_path):
+    # Process each media type
+    process_images(media_folder_path)
+    process_videos(media_folder_path)
+    convert_heic_to_png(media_folder_path)
+    extract_audio_metadata(media_folder_path)
+    
+    # Initialize a dictionary to hold all metadata
+    all_media_metadata = {
+        'images': [],
+        'videos': [],
+        'audio': []
+    }
+    
+    # Read metadata from CSV files
+    # Images
+    images_csv_path = os.path.join(media_folder_path, "images_output.csv")
+    with open(images_csv_path, newline='') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            all_media_metadata['images'].append(row)
+
+    # Videos
+    videos_csv_path = os.path.join(media_folder_path, "videos_output.csv")
+    with open(videos_csv_path, newline='') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            all_media_metadata['videos'].append(row)
+
+    # Audio
+    audio_csv_path = os.path.join(media_folder_path, "audio_metadata.csv")
+    with open(audio_csv_path, newline='') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            all_media_metadata['audio'].append(row)
+
+    return all_media_metadata
+
 # # Example usage:
 # # Set up to use a GUI for folder selection
 # root = tk.Tk()
@@ -169,3 +209,12 @@ def extract_audio_metadata(folder_path):
 # root.withdraw()  # to hide the small tk window
 # folder_path = filedialog.askdirectory(title="Select Folder Containing Media Files")
 # extract_audio_metadata(folder_path)
+
+# Example usage:
+# Set up to use a GUI for folder selection
+root = tk.Tk()
+root.withdraw()  # to hide the small tk window
+media_folder_path = filedialog.askdirectory(title="Select Folder Containing All Media Files")
+metadata = consolidate_media_metadata(media_folder_path)
+print(metadata)
+
