@@ -238,18 +238,18 @@ def display_basic_timeline():
 
 # Example usage:
 # folder_path = 'path_to_your_folder'  # Update the folder path to where your files are stored
-root = tk.Tk()
-root.withdraw()  # to hide the small tk window
-folder_path = filedialog.askdirectory(title="Select Folder Containing Media Files")
-extract_audio_metadata(folder_path)
-
-# # Example usage:
-# # Set up to use a GUI for folder selection
 # root = tk.Tk()
 # root.withdraw()  # to hide the small tk window
-# media_folder_path = filedialog.askdirectory(title="Select Folder Containing All Media Files")
-# metadata = consolidate_media_metadata(media_folder_path)
-# print(metadata)
+# folder_path = filedialog.askdirectory(title="Select Folder Containing Media Files")
+# extract_audio_metadata(folder_path)
+
+# Example usage:
+# Set up to use a GUI for folder selection
+root = tk.Tk()
+root.withdraw()  # to hide the small tk window
+media_folder_path = filedialog.askdirectory(title="Select Folder Containing All Media Files")
+metadata = consolidate_media_metadata(media_folder_path)
+print(metadata)
 
 # # Example usage
 # display_basic_timeline()
